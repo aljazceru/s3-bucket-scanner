@@ -9,7 +9,10 @@ def parseXml(result, link):
     try:
         root = ET.fromstring(result)
         for c in root.iter('{http://s3.amazonaws.com/doc/2006-03-01/}Key'):
-            print link + "/" + c.text
+            target = link + "/" + c.text
+            r = requests.head(target)
+            if r.status_code == 200:
+                print target
 
     # TO-DO: add better parse error handling
     except:
