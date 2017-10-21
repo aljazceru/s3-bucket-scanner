@@ -5,7 +5,6 @@ from argparse import ArgumentParser
 
 
 def parseXml(result, link):
-
     # TO-DO: add unicode support
     try:
         root = ET.fromstring(result)
@@ -17,8 +16,9 @@ def parseXml(result, link):
         pass
 
 
-def wordlistScan(bucket):
-    print "scanning bucket: " + bucket
+def s3Scan(silent,bucket):
+    if not silent:
+        print "scanning bucket: " + bucket
     link = "http://" + bucket + ".s3.amazonaws.com"
     try:
         r = requests.head(link)
@@ -29,29 +29,20 @@ def wordlistScan(bucket):
         print e
         pass
 
-def keywordScan(bucket):
-    print "scanning bucket: " + bucket
-    link = "http://" + bucket + ".s3.amazonaws.com"
-    try:
-        r = requests.head(link)
-        if r.status_code != 404:
-            r = requests.get(link)
-            parseXml(r.text, link)
-    except requests.exceptions.RequestException as e:
-        print e
-        pass
 
 def main():
     wordlist = ""
     keyword = ""
+    silent = 0
     parser = ArgumentParser()
     parser.add_argument("-w", "--wordlist", dest="wordlist",
                         help="Wordlist to use for bucket names (default: wordlist.txt)", default="wordlist.txt",
                         metavar="wordlist")
-
     parser.add_argument("-k", "--keyword", dest="keyword",
-                        help="Keyword to use with the wordlist in the form of <keyword>-<wordlist>", default="",
-                        metavar="keyword")
+                        help="Keyword to use with the wordlist in three different combinations: <keyword>-<wordlist>,<keyword>_<wordlist> and <keyword><wordlist>"
+                        , default="", metavar="keyword")
+    parser.add_argument("-s", "--silent", dest="silent",
+                        help="Silent mode - only prints out the findings without all the combinations and words it scanned for", action="store_true")
 
 
 
@@ -61,15 +52,23 @@ def main():
 
     args = parser.parse_args()
 
+    if args.silent:
+        silent = 1
+
     with open(args.wordlist, 'r') as f:
         bucketNames = [line.strip() for line in f]
 
     for bucket in bucketNames:
         if args.keyword != "":
             target = args.keyword + "-" + bucket
-            keywordScan(target)
+            s3Scan(silent,target)
+            target = args.keyword + "_" + bucket
+            s3Scan(silent,target)
+            target = args.keyword + bucket
+            s3Scan(silent,target)
+
         else:
-            wordlistScan(bucket)
+            s3Scan(silent,bucket)
 
 
 if __name__ == "__main__":
