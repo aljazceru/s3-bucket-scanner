@@ -16,7 +16,7 @@ def parseXml(result, link):
         pass
 
 
-def s3Scan(silent,bucket):
+def s3Scan(silent, bucket):
     if not silent:
         print "scanning bucket: " + bucket
     link = "http://" + bucket + ".s3.amazonaws.com"
@@ -42,9 +42,8 @@ def main():
                         help="Keyword to use with the wordlist in three different combinations: <keyword>-<wordlist>,<keyword>_<wordlist> and <keyword><wordlist>"
                         , default="", metavar="keyword")
     parser.add_argument("-s", "--silent", dest="silent",
-                        help="Silent mode - only prints out the findings without all the combinations and words it scanned for", action="store_true")
-
-
+                        help="Silent mode - only prints out the findings without all the combinations and words it scanned for",
+                        action="store_true")
 
     if len(sys.argv) == 1:
         parser.print_help()
@@ -61,14 +60,14 @@ def main():
     for bucket in bucketNames:
         if args.keyword != "":
             target = args.keyword + "-" + bucket
-            s3Scan(silent,target)
+            s3Scan(silent, target)
             target = args.keyword + "_" + bucket
-            s3Scan(silent,target)
+            s3Scan(silent, target)
             target = args.keyword + bucket
-            s3Scan(silent,target)
+            s3Scan(silent, target)
 
         else:
-            s3Scan(silent,bucket)
+            s3Scan(silent, bucket)
 
 
 if __name__ == "__main__":
