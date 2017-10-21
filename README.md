@@ -5,7 +5,7 @@ Simple public s3 bucket scanner written in python
 
 ### How it works
 
-This is a PoC of a public s3 bucket scanner. It uses wordlist to test for existence of publicly open s3 buckets and lists their contents. Wordlist provided with it is just a PoC wordlist I've gathered from various subdomain enumeration lists.
+This script is a public s3 bucket scanner. It uses wordlist to test for existence of publicly open s3 buckets and lists their contents. Wordlist provided with it is just a PoC wordlist I've gathered from various subdomain enumeration lists.
 
 Scanner supports two different modes: 
 - simple wordlist scan where it check if there is a publicly accessible s3 bucket for every word in the wordlist
